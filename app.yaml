@@ -1,4 +1,4 @@
-application: somelinks
+application: glasser-portfolio
 version: 1
 runtime: python
 api_version: 1

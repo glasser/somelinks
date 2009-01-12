@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>david glasser's portfolio</title>
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+    <p>I take <a href="http://flickr.com/photos/glasser/">photos</a>.
+      Sometimes other people use them for things.  Here are some of
+      them:</p>
+
+    <ul>
+      {% for link in links %}
+        <li>
+          <a href="{{ link.url|escape }}">{{ link.description|escape }}</a>
+          {% if admin %}
+            <a href="{% url DeleteHandler link.key.id %}">[x]</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+      {% if admin %}
+        <li>
+          <form action="{% url AddHandler %}" method="post">
+            url: <input type="text" name="url" />
+            description: <input type="text" name="description" />
+            <input type="submit" value="add" />
+          </form>
+        </li>
+      {% endif %}
+    </ul>
+  </body>
+</html>
+
