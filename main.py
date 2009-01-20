@@ -28,8 +28,9 @@ from google.appengine.ext.webapp import util
 
 
 class Link(db.Model):
-  url = db.StringProperty(required=True)
+  url = db.StringProperty()
   description = db.TextProperty(required=True)
+  hidden = db.BooleanProperty()
 
 
 class ListHandler(webapp.RequestHandler):
@@ -70,12 +71,34 @@ class DeleteHandler(webapp.RequestHandler):
     self.redirect(ListHandler.get_url())
 
 
+class ShowHideHandler(webapp.RequestHandler):
+  def get(self, link_id):
+    if not users.is_current_user_admin():
+      self.redirect(ListHandler.get_url())
+      return
+    link_id = long(link_id)
+    link = Link.get_by_id(link_id)
+    link.hidden = self.HIDDEN
+    link.put()
+    self.redirect(ListHandler.get_url())
+
+
+class ShowHandler(ShowHideHandler):
+  HIDDEN = False
+
+
+class HideHandler(ShowHideHandler):
+  HIDDEN = True
+
+
 def main():
   application = webapp.WSGIApplication([
       ('/', ListHandler),
       ('/login/?', LoginHandler),
       ('/add', AddHandler),
       ('/delete/(\\d+)', DeleteHandler),
+      ('/show/(\\d+)', ShowHandler),
+      ('/hide/(\\d+)', HideHandler),
       ])
   wsgiref.handlers.CGIHandler().run(application)
 

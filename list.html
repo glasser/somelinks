@@ -11,12 +11,20 @@
 
     <ul>
       {% for link in links %}
-        <li>
-          <a href="{{ link.url|escape }}">{{ link.description|escape }}</a>
-          {% if admin %}
-            <a href="{% url DeleteHandler link.key.id %}">[x]</a>
-          {% endif %}
-        </li>
+        {% if admin or not link.hidden %}
+          <li>
+            {% if link.url %}<a href="{{ link.url|escape }}"
+                 >{% endif %}{{ link.description|escape }}{% if link.url %}</a>{% endif %}
+            {% if admin %}
+              <a href="{% url DeleteHandler link.key.id %}">[x]</a>
+              {% if link.hidden %}
+                <a href="{% url ShowHandler link.key.id %}">[show]</a>
+              {% else %}
+                <a href="{% url HideHandler link.key.id %}">[hide]</a>
+              {% endif %}
+            {% endif %}
+          </li>
+        {% endif %}
       {% endfor %}
       {% if admin %}
         <li>
